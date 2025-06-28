@@ -49,7 +49,7 @@ app.get((req, res) => {
   res.status(404).send("not founds");
 });
 
-app.listen(8080, () => {
+app.listen(process.env.SERVER_PORT, () => {
   console.log(`Server running on 8080`);
 });
 //test
