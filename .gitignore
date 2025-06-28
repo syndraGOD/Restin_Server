@@ -26,3 +26,4 @@ VSWorkspaceState.json
 .wsuo
 .env*
 sample/*
+env/*
