@@ -5,7 +5,7 @@ const PointRequestTicketForm = require("../models/pointRequestTicketForm");
 // const {  } = require("../middleware/auth");
 const { verifyTokenMiddleware } = require("../controllers/auth");
 const { db_user_read } = require("../utils/CRUD_userData");
-const { db } = require("../configFiles/firebaseConfig.js");
+
 const { v4: uuidv4 } = require("uuid");
 const {
   doc,
@@ -30,7 +30,7 @@ const checkExistingRequest = async (req, res, next) => {
     const userId = req.userId;
 
     // 기존 신청건 확인
-    const requestColRef = collection(db, colNameRequest);
+    const requestColRef = collection(global.firebaseDB, colNameRequest);
     const q = query(
       requestColRef,
       where("info.userId", "==", userId),
@@ -139,7 +139,7 @@ router.delete(
     try {
       const { existingRequest } = req.body;
       const userId = req.userId;
-      const requestColRef = collection(db, colNameRequest);
+      const requestColRef = collection(global.firebaseDB, colNameRequest);
       //firebase에서 삭제
       const ticketRef = doc(
         db,
@@ -199,7 +199,7 @@ const recordPointChange = async (req, res, next) => {
 
     // 포인트 충전/환불 승인 시
     if (req.baseUrl.includes("/point") && req.path.includes("/admin/approve")) {
-      const ticketRef = doc(db, colNameRequest, req.body.pointRequestTicketId);
+      const ticketRef = doc(global.firebaseDB, colNameRequest, req.body.pointRequestTicketId);
       const ticketSnap = await getDoc(ticketRef);
       const requestTicket = ticketSnap.data();
 
@@ -237,7 +237,7 @@ const recordPointChange = async (req, res, next) => {
     });
 
     // Firebase에 저장
-    const ticketRef = doc(db, colNamePoint, pointTicket.pointTicketId);
+    const ticketRef = doc(global.firebaseDB, colNamePoint, pointTicket.pointTicketId);
     await setDoc(ticketRef, pointTicket);
 
     // 다음 미들웨어에서 사용할 수 있도록 데이터 전달
@@ -263,7 +263,7 @@ const recordPointChange = async (req, res, next) => {
 //     };
 
 //     // Firebase 업데이트
-//     const ticketRef = doc(db, colNameRequest, pointRequestTicketId);
+//     const ticketRef = doc(global.firebaseDB, colNameRequest, pointRequestTicketId);
 //     await updateDoc(ticketRef, updateData);
 
 //     res.status(200).json({ success: true });
@@ -284,7 +284,7 @@ const recordPointChange = async (req, res, next) => {
 //     };
 
 //     // Firebase 업데이트
-//     const ticketRef = doc(db, colNameRequest, pointRequestTicketId);
+//     const ticketRef = doc(global.firebaseDB, colNameRequest, pointRequestTicketId);
 //     await updateDoc(ticketRef, updateData);
 
 //     res.status(200).json({ success: true });

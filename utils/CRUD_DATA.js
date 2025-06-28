@@ -9,11 +9,10 @@ const {
   runTransaction,
   setDoc,
 } = require("firebase/firestore");
-const { db } = require("../configFiles/firebaseConfig");
 
 async function queryWrite(collectionName, docName, data) {
   try {
-    const docRef = doc(db, collectionName, docName);
+    const docRef = doc(global.firebaseDB, collectionName, docName);
     const result = await setDoc(docRef, data);
     return {
       success: true,
@@ -31,7 +30,7 @@ async function queryWrite(collectionName, docName, data) {
 // 컬렉션에서 userId로 쿼리하는 함수
 async function queryRead(collectionName, key, value, sorted) {
   try {
-    const q = query(collection(db, collectionName), where(key, "==", value));
+    const q = query(collection(global.firebaseDB, collectionName), where(key, "==", value));
 
     const querySnapshot = await getDocs(q);
     const results = [];
@@ -61,7 +60,7 @@ async function queryRead(collectionName, key, value, sorted) {
 // 조건 쿼리 함수 (정렬 제외)
 async function queryReadWithConditions(collectionName, conditions) {
   try {
-    let q = collection(db, collectionName);
+    let q = collection(global.firebaseDB, collectionName);
 
     // 조건이 있는 경우에만 where 절 적용
     if (conditions && conditions.length > 0) {
@@ -99,7 +98,7 @@ async function queryReadWithConditions(collectionName, conditions) {
 // 문서 업데이트 함수
 async function updateData(collectionName, docId, updateData) {
   try {
-    const docRef = doc(db, collectionName, docId);
+    const docRef = doc(global.firebaseDB, collectionName, docId);
     await updateDoc(docRef, updateData);
 
     return {
@@ -118,10 +117,10 @@ async function updateData(collectionName, docId, updateData) {
 // 현랜잭션으로 여러 문서 업데이트
 async function updateDataWithTransaction(updates) {
   try {
-    const result = await runTransaction(db, async (transaction) => {
+    const result = await runTransaction(global.firebaseDB, async (transaction) => {
       // updates 배열 형태: [{collectionName, docId, updateData}, ...]
       for (const update of updates) {
-        const docRef = doc(db, update.collectionName, update.docId);
+        const docRef = doc(global.firebaseDB, update.collectionName, update.docId);
         transaction.update(docRef, update.updateData);
       }
     });

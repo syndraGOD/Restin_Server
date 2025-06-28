@@ -27,7 +27,6 @@ const {
   runTransaction,
   getDoc,
 } = require("firebase/firestore");
-const { db } = require("../configFiles/firebaseConfig");
 const sendMsg = require("../utils/SMS_message.js");
 const TotalPriceMath = (b, c) => {
   b = parseInt(b);
@@ -71,8 +70,8 @@ const usage_start = async (req, res, next) => {
     const { id, uuid } = storeInfo;
 
     //store maximum count human check
-    // let q = query(collection(db, "STORE"), where("UUID", "==", uuid))
-    const storeDocRef = doc(db, "STORE", uuid);
+    // let q = query(collection(global.firebaseDB, "STORE"), where("UUID", "==", uuid))
+    const storeDocRef = doc(global.firebaseDB, "STORE", uuid);
     const storeDocSnap = await getDoc(storeDocRef);
 
     if (!storeDocSnap.exists()) return;
@@ -80,7 +79,7 @@ const usage_start = async (req, res, next) => {
     const storeAllowMaxCount = Number(snapData.allowMaxUserCount);
     const storeOwnerCall = snapData.ownerCall;
     q = query(
-      collection(db, "USAGE_ING_TICKET"),
+      collection(global.firebaseDB, "USAGE_ING_TICKET"),
       where("usage.storeUUID", "==", uuid)
     );
     const querySnapshot = await getDocs(q);

@@ -4,7 +4,6 @@ const utcFromTimestamp = (time) => {
 };
 
 const jwt = require("jsonwebtoken");
-require("dotenv").config({ path: "configFiles/.env" });
 const secretKey = process.env.JWT_SECRET_KEY;
 
 const generateToken = (payload) => {

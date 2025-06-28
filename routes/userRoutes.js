@@ -10,7 +10,6 @@ const {
   Timestamp,
   runTransaction,
 } = require("firebase/firestore");
-const { db } = require("../configFiles/firebaseConfig.js");
 const { verifyTokenMiddleware } = require("../controllers/auth.js");
 const {
   usage_isUsing,
@@ -38,13 +37,13 @@ router.post("/usage/isUsage", usage_isUsing, (req, res) => {
 router.post("/usage/storeUsageCount", async (req, res) => {
   const { storeInfo } = req.body;
   const { uuid } = storeInfo;
-  const storeDocRef = doc(db, "STORE", uuid);
+  const storeDocRef = doc(global.firebaseDB, "STORE", uuid);
   const storeDocSnap = await getDoc(storeDocRef);
   if (!storeDocSnap.exists()) return;
   let snapData = storeDocSnap.data();
   const storeAllowMaxCount = Number(snapData.allowMaxUserCount);
   q = query(
-    collection(db, "USAGE_ING_TICKET"),
+    collection(global.firebaseDB, "USAGE_ING_TICKET"),
     where("usage.storeUUID", "==", uuid)
   );
   const querySnapshot = await getDocs(q);
@@ -59,7 +58,7 @@ router.put("/userdata", async (req, res) => {
   try {
     const { userId } = req;
     const { nick } = req.body;
-    const docRef = doc(db, "USER", userId);
+    const docRef = doc(global.firebaseDB, "USER", userId);
     await updateDoc(docRef, { "profile.nick": nick });
     res.status(200).json({ message: "user data update complete" });
     console.log("complete");
@@ -71,7 +70,7 @@ router.put("/userdata", async (req, res) => {
 router.delete("/userdata", async (req, res) => {
   try {
     const { userId } = req;
-    const docRef = doc(db, "USER", userId);
+    const docRef = doc(global.firebaseDB, "USER", userId);
     await deleteDoc(docRef);
     res.status(200).json({ message: "user data update complete" });
   } catch (error) {

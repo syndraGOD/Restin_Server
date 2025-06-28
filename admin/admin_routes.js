@@ -17,7 +17,6 @@ const {
   queryRead,
 } = require("../utils/CRUD_DATA.js");
 const { collection, doc, getDoc, setDoc } = require("firebase/firestore");
-const { db } = require("../configFiles/firebaseConfig.js");
 const { ADMIN_ACCOUNTS } = require("../configFiles/config.js");
 const { v4: uuidv4 } = require("uuid");
 
@@ -351,7 +350,7 @@ router.post(
           "after.adminMemo": "승인 완료",
         };
 
-        const userDataDoc = doc(collection(db, "USER"), userId);
+        const userDataDoc = doc(collection(global.firebaseDB, "USER"), userId);
         const userData = (await getDoc(userDataDoc)).data();
         const totalPoint =
           userData.point.amount +
@@ -372,7 +371,7 @@ router.post(
           userId: userId,
         };
         const pointLogUpdateResult = await setDoc(
-          doc(collection(db, "POINT_TICKET"), pointTicketId),
+          doc(collection(global.firebaseDB, "POINT_TICKET"), pointTicketId),
           pointLog
         );
         const pointUpdateResult = await updateData("USER", userId, {

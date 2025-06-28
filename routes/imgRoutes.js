@@ -1,4 +1,4 @@
-const { db, storage } = require("../configFiles/firebaseConfig.js");
+
 const { ref, getDownloadURL, listAll } = require("firebase/storage");
 const { verifyTokenMiddleware } = require("../controllers/auth");
 
@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.get("/announce_list", verifyTokenMiddleware, async (req, res, next) => {
   try {
-    const pathRef = ref(storage, `AnnounceImage`);
+    const pathRef = ref(global.firebaseStorage, `AnnounceImage`);
     const imageList = await listAll(pathRef);
     const imageURLs = await Promise.all(
       imageList.items.map((item) => getDownloadURL(item))

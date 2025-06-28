@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "NODE_ENV=development nodemon main.js",
-    "build:dev": "NODE_ENV=staging",
-    "build:prod": "scp -i /Users/gimhan-ul/dev/Restin/Web/restinSSH.pem -r /Users/gimhan-ul/dev/Restin/Back ubuntu@ec2-3-35-49-70.ap-northeast-2.compute.amazonaws.com",
+    "envSend:dev": "NODE_ENV=staging",
+    "envSend:prod": "scp -i /Users/gimhan-ul/dev/Restin/Web/restinSSH.pem -r /Users/gimhan-ul/dev/Restin/Back ubuntu@ec2-3-35-49-70.ap-northeast-2.compute.amazonaws.com",
     "start:dev": "NODE_ENV=staging pm2 start main.js --no-autorestart",
     "start:prod": "NODE_ENV=production pm2 start main.js --no-autorestart"
   },

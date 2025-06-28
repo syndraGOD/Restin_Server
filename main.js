@@ -1,4 +1,14 @@
-const { firebaseConfigm, admin } = require("./configFiles/firebaseConfig.js");
+
+const dotenv = require("dotenv");
+const path = require("path");
+
+// 현재 실행 모드 확인 (process.env.NODE_ENV 또는 커스텀 환경 변수)
+const env = process.env.NODE_ENV || 'development';
+// const envDir = path.resolve(__dirname, `.env.${env}`);
+const envPath = path.resolve(__dirname, `.env.${env}`);
+dotenv.config({ path: envPath });
+
+
 
 const express = require("express");
 const cors = require("cors");
@@ -13,15 +23,9 @@ const purchase = require("./routes/purchaseRoutes.js"); //purchase 관련 라우
 const imgs = require("./routes/imgRoutes.js");
 const survey = require("./routes/surveyRoutes.js");
 const app = express();
-const dotenv = require("dotenv");
-const path = require("path");
 
-// 현재 실행 모드 확인 (process.env.NODE_ENV 또는 커스텀 환경 변수)
-const env = process.env.NODE_ENV || 'development';
-const envDir = path.resolve(__dirname, `../Web/.env.${env}`);
-const envPath = path.resolve(envDir, `.env.${env}`);
-dotenv.config({ path: envPath });
 
+require("./utils/common/common.js");
 // 라우터 설정
 const corsOptions = {
   origin: "*", // 출처 허용 옵션

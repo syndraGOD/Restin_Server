@@ -1,4 +1,4 @@
-const { db } = require("../configFiles/firebaseConfig.js");
+
 const {
   doc,
   setDoc,
@@ -18,7 +18,7 @@ const colNameRequest = "POINT_REQUEST_TICKETS";
 const db_pointRequest_create = async (pointRequestTicket) => {
   const { pointRequestTicketId } = pointRequestTicket;
   try {
-    const ticketRef = doc(db, colNameRequest, pointRequestTicketId);
+    const ticketRef = doc(global.firebaseDB, colNameRequest, pointRequestTicketId);
     await setDoc(ticketRef, pointRequestTicket);
     return new RESForm({
       resultCode: 200,
@@ -36,7 +36,7 @@ const db_pointRequest_create = async (pointRequestTicket) => {
 // 포인트 요청 티켓 조회
 const db_pointRequest_read = async (pointRequestTicketId) => {
   try {
-    const ticketRef = doc(db, colNameRequest, pointRequestTicketId);
+    const ticketRef = doc(global.firebaseDB, colNameRequest, pointRequestTicketId);
     const ticketSnap = await getDoc(ticketRef);
 
     if (ticketSnap.exists()) {
@@ -61,7 +61,7 @@ const db_pointRequest_read = async (pointRequestTicketId) => {
 // 포인트 요청 티켓 업데이트
 const db_pointRequest_update = async (pointRequestTicketId, updateData) => {
   try {
-    const ticketRef = doc(db, colNameRequest, pointRequestTicketId);
+    const ticketRef = doc(global.firebaseDB, colNameRequest, pointRequestTicketId);
     await updateDoc(ticketRef, updateData);
     return new RESForm({
       resultCode: 200,
@@ -79,7 +79,7 @@ const db_pointRequest_update = async (pointRequestTicketId, updateData) => {
 const db_pointTicket_create = async (pointTicket) => {
   const { pointTicketId } = pointTicket;
   try {
-    const ticketRef = doc(db, colNamePoint, pointTicketId);
+    const ticketRef = doc(global.firebaseDB, colNamePoint, pointTicketId);
     await setDoc(ticketRef, pointTicket);
     return new RESForm({
       resultCode: 200,
@@ -97,7 +97,7 @@ const db_pointTicket_create = async (pointTicket) => {
 // 유저의 포인트 요청 목록 조회
 const db_pointRequest_readByUser = async (userId) => {
   try {
-    const ticketColRef = collection(db, colNameRequest);
+    const ticketColRef = collection(global.firebaseDB, colNameRequest);
     const q = query(ticketColRef, where("userId", "==", userId));
     const querySnapshot = await getDocs(q);
 

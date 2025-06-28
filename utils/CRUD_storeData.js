@@ -1,4 +1,4 @@
-const { db, storage } = require("../configFiles/firebaseConfig.js");
+
 const {
   doc,
   setDoc,
@@ -13,7 +13,6 @@ const {
 const { ref, getDownloadURL, listAll } = require("firebase/storage");
 const StoreForm = require("../models/storeDataForm.js");
 const RESForm = require("../models/inPacketForm.js");
-// const { getImgList, getImg } = require("./storage");
 
 const colName = "STORE";
 let cachedStoreData = []; // 캐시된 스토어 데이터
@@ -22,7 +21,7 @@ let lastFetchTime = null; // 마지막 데이터 갱신 시간
 // 스토어 데이터 새로고침 함수
 const fetchStoreDataWithImages = async () => {
   try {
-    const storeCollectionRef = collection(db, colName);
+    const storeCollectionRef = collection(global.firebaseDB, colName);
     const querySnapshot = await getDocs(storeCollectionRef);
 
     if (querySnapshot.empty) {
@@ -35,7 +34,7 @@ const fetchStoreDataWithImages = async () => {
       querySnapshot.docs.map(async (doc) => {
         const data = doc.data();
         try {
-          const pathRef = ref(storage, `StoreImage/store(${data.id})`);
+          const pathRef = ref(global.firebaseStorage, `StoreImage/store(${data.id})`);
           const imageList = await listAll(pathRef);
           const imageURLs = await Promise.all(
             imageList.items.map((item) => getDownloadURL(item))
@@ -170,7 +169,7 @@ const db_store_create = async (storeData) => {
     // console.log(newStoreData);
     // console.log(newStoreForm);
     console.log(obj_storeData);
-    const storeRef = doc(db, colName, obj_storeData.UUID);
+    const storeRef = doc(global.firebaseDB, colName, obj_storeData.UUID);
     await setDoc(storeRef, obj_storeData);
     await fetchStoreDataWithImages(); // 캐시 갱신
     console.log("New Store Created / name : ", obj_storeData.name);
@@ -190,7 +189,7 @@ const db_store_create = async (storeData) => {
 // 스토어 업데이트 함수 - 캐시 갱신 포함
 const db_store_update = async (UUID, storeData) => {
   try {
-    const storeRef = doc(db, colName, UUID);
+    const storeRef = doc(global.firebaseDB, colName, UUID);
     await updateDoc(storeRef, storeData);
     await fetchStoreDataWithImages(); // 캐시 갱신
     return new RESForm({
@@ -209,7 +208,7 @@ const db_store_update = async (UUID, storeData) => {
 // 스토어 삭제 함수 - 캐시 갱신 포함
 const db_store_delete = async (UUID) => {
   try {
-    const storeRef = doc(db, colName, UUID);
+    const storeRef = doc(global.firebaseDB, colName, UUID);
     await deleteDoc(storeRef);
     await fetchStoreDataWithImages(); // 캐시 갱신
     return new RESForm({

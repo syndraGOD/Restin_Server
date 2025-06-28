@@ -7,7 +7,6 @@ const {
 } = require("../utils/CRUD_userData.js");
 
 const UserForm = require("../models/userDataForm.js");
-const { firebaseConfig, admin } = require("../configFiles/firebaseConfig.js");
 const { jsDateToFirebaseDate } = require("../utils/firebaseDateConverter.js");
 const sendMsg = require("../utils/SMS_message.js");
 const { v4: uuidv4 } = require("uuid");
@@ -23,7 +22,6 @@ const smsVerify = {
 /**
  *
  */
-// admin.initializeApp(firebaseConfig);
 
 //미들웨어는, 성공토큰을 보내면 안된다,
 //마지막 200 res는 반드시 routes에서
@@ -194,7 +192,7 @@ const user_registerMiddleware = async (req, res, next) => {
       req.userId = userId;
       next();
     } else {
-      res.status(400).json({ message: RES.text });
+      res.status(400).json({ message: RES.text, error: RES.error });
     }
   } catch {
     res.status(401).json({ message: "user create failed" });

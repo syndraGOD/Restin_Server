@@ -1,4 +1,4 @@
-const { db } = require("../configFiles/firebaseConfig.js");
+
 const {
   doc,
   setDoc,
@@ -28,7 +28,7 @@ const db_user_create = async (userData) => {
     ...newUserForm,
   };
   try {
-    const userRef = doc(db, colName, obj_userData.userId); //obj_userData.userId);
+    const userRef = doc(global.firebaseDB, colName, obj_userData.userId); //obj_userData.userId);
     await setDoc(userRef, obj_userData);
     console.log("New User Created / nick : ", obj_userData.profile.nick);
     return new RESForm({
@@ -47,7 +47,7 @@ const db_user_create = async (userData) => {
 // 사용자 읽기 함수 (non-query)
 const db_user_read = async (userId) => {
   try {
-    const userRef = doc(db, colName, userId);
+    const userRef = doc(global.firebaseDB, colName, userId);
     const userSnap = await getDoc(userRef);
     if (userSnap.exists()) {
       return new RESForm({
@@ -73,7 +73,7 @@ const db_user_read = async (userId) => {
 // 쿼리 기반 사용자 읽기 함수
 const db_user_read_query = async (fieldName, value) => {
   try {
-    const userCollectionRef = collection(db, colName);
+    const userCollectionRef = collection(global.firebaseDB, colName);
     const q = query(userCollectionRef, where(fieldName, "==", value));
     const querySnapshot = await getDocs(q);
 
@@ -106,7 +106,7 @@ const db_user_read_query = async (fieldName, value) => {
 // 사용자 업데이트 함수
 const db_user_update = async (userId, userData) => {
   try {
-    const userRef = doc(db, colName, userId);
+    const userRef = doc(global.firebaseDB, colName, userId);
     await updateDoc(userRef, userData);
     return new RESForm({
       resultCode: 200,
@@ -124,7 +124,7 @@ const db_user_update = async (userId, userData) => {
 // 사용자 삭제 함수
 const db_user_delete = async (userId) => {
   try {
-    const userRef = doc(db, colName, userId);
+    const userRef = doc(global.firebaseDB, colName, userId);
     await deleteDoc(userRef);
     return new RESForm({
       resultCode: 200,

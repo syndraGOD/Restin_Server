@@ -1,4 +1,4 @@
-const { db } = require("../configFiles/firebaseConfig.js");
+
 const {
   doc,
   setDoc,
@@ -31,7 +31,7 @@ const db_usageTicket_create = async (usage) => {
     ...newUserForm,
   };
   try {
-    const userRef = doc(db, colNameING, usageLogId); //obj_userData.userId);
+    const userRef = doc(global.firebaseDB, colNameING, usageLogId); //obj_userData.userId);
     await setDoc(userRef, obj_userData);
     console.log("New UsageTicket / code : ", usageLogId);
     return new RESForm({
@@ -46,7 +46,7 @@ const db_usageTicket_create = async (usage) => {
   }
 };
 const db_usageTicket_isuse = async (userId) => {
-  const userColRef = collection(db, colNameING);
+  const userColRef = collection(global.firebaseDB, colNameING);
   const q = query(userColRef, where("usage.userId", "==", userId));
   const querySnapshot = await getDocs(q);
 
@@ -64,8 +64,8 @@ const db_usageTicket_isuse = async (userId) => {
 };
 const db_usageTicket_end = async (usage) => {
   const { usageLogId } = usage;
-  const oldRef = doc(db, colNameING, usageLogId);
-  const newRef = doc(db, colNameWAIT, usageLogId);
+  const oldRef = doc(global.firebaseDB, colNameING, usageLogId);
+  const newRef = doc(global.firebaseDB, colNameWAIT, usageLogId);
 
   const newUsageForm = new UsageTicketForm({
     ...usage,

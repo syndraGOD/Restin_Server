@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const { verifyTokenMiddleware } = require("../controllers/auth");
 const { db_user_read } = require("../utils/CRUD_userData");
-const { db } = require("../configFiles/firebaseConfig.js");
 const { v4: uuidv4 } = require("uuid");
 const {
   doc,
@@ -118,7 +117,7 @@ router.post("/usage/portone", verifyTokenMiddleware, async (req, res) => {
           const newUsage = new UsageTicketForm({ userId: userRes.data.userId });
 
           // 구매 티켓 저장
-          const purchaseRef = doc(db, "PURCHASE_TICKET", purchaseTicketUUID);
+          const purchaseRef = doc(global.firebaseDB, "PURCHASE_TICKET", purchaseTicketUUID);
           await setDoc(purchaseRef, { ...purchaseTicket });
 
           // USAGE_WAIT_PURCHASE_TICKET에서 데이터 가져오기
@@ -147,7 +146,7 @@ router.post("/usage/portone", verifyTokenMiddleware, async (req, res) => {
           await deleteDoc(usageIngRef);
 
           // 유저의 포인트 잔액과 usage 데이터 업데이트
-          const userRef = doc(db, "USER", userId);
+          const userRef = doc(global.firebaseDB, "USER", userId);
 
           await updateDoc(userRef, {
             usage: { ...newUsage.usage },
@@ -260,11 +259,11 @@ router.post("/usage/point", verifyTokenMiddleware, async (req, res) => {
     const newUsage = new UsageTicketForm({ userId: userRes.data.userId });
 
     // 구매 티켓 저장
-    const purchaseRef = doc(db, "PURCHASE_TICKET", purchaseTicketUUID);
+    const purchaseRef = doc(global.firebaseDB, "PURCHASE_TICKET", purchaseTicketUUID);
     await setDoc(purchaseRef, { ...purchaseTicket });
 
     // 포인트 티켓 저장
-    const pointRef = doc(db, "POINT_TICKET", pointTicketUUID);
+    const pointRef = doc(global.firebaseDB, "POINT_TICKET", pointTicketUUID);
     await setDoc(pointRef, { ...pointTicket });
 
     // USAGE_ING_TICKET에서 데이터 가져오기
@@ -293,7 +292,7 @@ router.post("/usage/point", verifyTokenMiddleware, async (req, res) => {
     await deleteDoc(usageIngRef);
 
     // 유저의 포인트 잔액과 usage 데이터 업데이트
-    const userRef = doc(db, "USER", userId);
+    const userRef = doc(global.firebaseDB, "USER", userId);
 
     await updateDoc(userRef, {
       "point.amount": currentPoint - totalAmount,
