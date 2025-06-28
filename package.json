@@ -1,0 +1,32 @@
+{
+  "name": "restin",
+  "version": "1.0.0",
+  "description": "Restin Server",
+  "main": "index.js",
+  "scripts": {
+    "dev": "NODE_ENV=development nodemon main.js",
+    "build:dev": "NODE_ENV=staging",
+    "build:prod": "scp -i /Users/gimhan-ul/dev/Restin/Web/restinSSH.pem -r /Users/gimhan-ul/dev/Restin/Back ubuntu@ec2-3-35-49-70.ap-northeast-2.compute.amazonaws.com",
+    "start:dev": "NODE_ENV=staging pm2 start main.js --no-autorestart",
+    "start:prod": "NODE_ENV=production pm2 start main.js --no-autorestart"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "coolsms-node-sdk": "^2.0.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "expo-server-sdk": "^3.12.0",
+    "express": "^4.21.1",
+    "express-session": "^1.18.1",
+    "firebase": "10.12.5",
+    "firebase-admin": "^12.7.0",
+    "http": "^0.0.1-security",
+    "jsonwebtoken": "^9.0.2",
+    "node-fetch": "2.0.0",
+    "nodemon": "^3.1.7",
+    "notion-client": "^6.16.0",
+    "pm2": "^5.4.2",
+    "uuid": "^11.0.2"
+  }
+}

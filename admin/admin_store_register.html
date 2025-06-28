@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>관리자 대시보드</title>
+    <link rel="stylesheet" href="admin_store_register.css" />
+  </head>
+  <body>
+    <div class="store-container">
+      <h2>스토어 관리</h2>
+
+      <!-- 테스트 데이터 입력 버튼 추가 -->
+      <button onclick="fillTestData()" style="margin-bottom: 20px">
+        테스트 데이터 입력
+      </button>
+
+      <!-- 스토어 추가 폼 -->
+      <div class="store-form">
+        <h3>새 스토어 추가</h3>
+        <form id="addStoreForm">
+          <div class="form-section">
+            <h4>기본 정보</h4>
+            <div class="form-group">
+              <label>가게 이름</label>
+              <input type="text" name="name" required />
+            </div>
+            <div class="form-group">
+              <label>대표자 성함</label>
+              <input type="text" name="storeOwnerName" required />
+            </div>
+            <div class="form-group">
+              <label>입금자명</label>
+              <input type="text" name="accountHolder" required />
+            </div>
+            <div class="form-group">
+              <label>정산 계좌</label>
+              <input type="text" name="settlementAccount" required />
+            </div>
+            <div class="form-group">
+              <label>분당 단가</label>
+              <input type="number" name="unitPrice" required />
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h4>위치 정보</h4>
+            <div class="form-group">
+              <label>주소</label>
+              <input type="text" name="location" required />
+            </div>
+
+            <!-- 지하철 정보 입력 폼 수정 -->
+            <div class="form-group subway-info">
+              <label>지하철 역 정보</label>
+              <div class="subway-input-container">
+                <div class="subway-input-set">
+                  <div class="subway-inputs">
+                    <input
+                      type="number"
+                      id="subwayLine"
+                      placeholder="호선 (예: 1)"
+                    />
+                    <input
+                      type="text"
+                      id="subwayStation"
+                      placeholder="역명 (예: 수원)"
+                    />
+                    <input
+                      type="number"
+                      id="exitNumber"
+                      placeholder="출구번호 (예: 3)"
+                    />
+                    <input
+                      type="number"
+                      id="walkTime"
+                      placeholder="도보시간(분) (예: 5)"
+                    />
+                    <button
+                      type="button"
+                      onclick="addSubwayInfo()"
+                      class="add-button"
+                    >
+                      추가
+                    </button>
+                  </div>
+                </div>
+                <!-- 추가된 지하철 정보가 표시될 컨테이너 -->
+                <div id="subwayInfoList"></div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>GPS 위도</label>
+              <input type="text" name="gps.Latitude" />
+            </div>
+            <div class="form-group">
+              <label>GPS 경도</label>
+              <input type="text" name="gps.longitude" />
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h4>영업 시간</h4>
+            <div class="business-time-container">
+              <!-- 월요일 -->
+              <div class="day-time">
+                <h5>월요일</h5>
+                <div class="form-group">
+                  <label>영업여부</label>
+                  <select
+                    class="business-day-toggle"
+                    data-day="mon"
+                    onchange="toggleBusinessDay(this)"
+                  >
+                    <option value="open">영업</option>
+                    <option value="closed">휴무</option>
+                  </select>
+                </div>
+                <div class="business-hours" id="mon-hours">
+                  <div class="form-group">
+                    <label>오픈</label>
+                    <input
+                      type="text"
+                      name="businessTime.monopen"
+                      placeholder="1200"
+                      maxlength="4"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label>마감</label>
+                    <input
+                      type="text"
+                      name="businessTime.monclose"
+                      placeholder="2200"
+                      maxlength="4"
+                    />
+                  </div>
+                  <div class="form-group break-time">
+                    <label>브레이크타임</label>
+                    <div class="break-time-container">
+                      <div class="break-time-input">
+                        <input
+                          type="text"
+                          placeholder="시작시간 (예: 1300)"
+                          maxlength="4"
+                          class="break-start"
+                        />
+                        <input
+                          type="text"
+                          placeholder="종료시간 (예: 1500)"
+                          maxlength="4"
+                          class="break-duration"
+                        />
+                        <button
+                          type="button"
+                          onclick="addBreakTime(this, 'mon')"
+                        >
+                          추가
+                        </button>
+                      </div>
+                      <div class="break-time-list" id="mon-break-list"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 화요일 -->
+              <div class="day-time">
+                <h5>화요일</h5>
+                <div class="form-group">
+                  <label>영업여부</label>
+                  <select
+                    class="business-day-toggle"
+                    data-day="tue"
+                    onchange="toggleBusinessDay(this)"
+                  >
+                    <option value="open">영업</option>
+                    <option value="closed">휴무</option>
+                  </select>
+                </div>
+                <div class="business-hours" id="tue-hours">
+                  <div class="form-group">
+                    <label>오픈</label>
+                    <input
+                      type="text"
+                      name="businessTime.tueopen"
+                      placeholder="1200"
+                      maxlength="4"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label>마감</label>
+                    <input
+                      type="text"
+                      name="businessTime.tueclose"
+                      placeholder="2200"
+                      maxlength="4"
+                    />
+                  </div>
+                  <div class="form-group break-time">
+                    <label>브레이크타임</label>
+                    <div class="break-time-container">
+                      <div class="break-time-input">
+                        <input
+                          type="text"
+                          placeholder="시작시간"
+                          maxlength="4"
+                          class="break-start"
+                        />
+                        <input
+                          type="text"
+                          placeholder="지속시간(분)"
+                          maxlength="4"
+                          class="break-duration"
+                        />
+                        <button
+                          type="button"
+                          onclick="addBreakTime(this, 'tue')"
+                        >
+                          추가
+                        </button>
+                      </div>
+                      <div class="break-time-list" id="tue-break-list"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 수요일 -->
+              <div class="day-time">
+                <h5>수요일</h5>
+                <div class="form-group">
+                  <label>영업여부</label>
+                  <select
+                    class="business-day-toggle"
+                    data-day="wed"
+                    onchange="toggleBusinessDay(this)"
+                  >
+                    <option value="open">영업</option>
+                    <option value="closed">휴무</option>
+                  </select>
+                </div>
+                <div class="business-hours" id="wed-hours">
+                  <div class="form-group">
+                    <label>오픈</label>
+                    <input
+                      type="text"
+                      name="businessTime.wedopen"
+                      placeholder="1200"
+                      maxlength="4"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label>마감</label>
+                    <input
+                      type="text"
+                      name="businessTime.wedclose"
+                      placeholder="2200"
+                      maxlength="4"
+                    />
+                  </div>
+                  <div class="form-group break-time">
+                    <label>브레이크타임</label>
+                    <div class="break-time-container">
+                      <div class="break-time-input">
+                        <input
+                          type="text"
+                          placeholder="시작시간"
+                          maxlength="4"
+                          class="break-start"
+                        />
+                        <input
+                          type="text"
+                          placeholder="지속시간(분)"
+                          maxlength="4"
+                          class="break-duration"
+                        />
+                        <button
+                          type="button"
+                          onclick="addBreakTime(this, 'wed')"
+                        >
+                          추가
+                        </button>
+                      </div>
+                      <div class="break-time-list" id="wed-break-list"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 목요일 -->
+              <div class="day-time">
+                <h5>목요일</h5>
+                <div class="form-group">
+                  <label>영업여부</label>
+                  <select
+                    class="business-day-toggle"
+                    data-day="thu"
+                    onchange="toggleBusinessDay(this)"
+                  >
+                    <option value="open">영업</option>
+                    <option value="closed">휴무</option>
+                  </select>
+                </div>
+                <div class="business-hours" id="thu-hours">
+                  <div class="form-group">
+                    <label>오픈</label>
+                    <input
+                      type="text"
+                      name="businessTime.thuopen"
+                      placeholder="1200"
+                      maxlength="4"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label>마감</label>
+                    <input
+                      type="text"
+                      name="businessTime.thuclose"
+                      placeholder="2200"
+                      maxlength="4"
+                    />
+                  </div>
+                  <div class="form-group break-time">
+                    <label>브레이크타임</label>
+                    <div class="break-time-container">
+                      <div class="break-time-input">
+                        <input
+                          type="text"
+                          placeholder="시작시간"
+                          maxlength="4"
+                          class="break-start"
+                        />
+                        <input
+                          type="text"
+                          placeholder="지속시간(분)"
+                          maxlength="4"
+                          class="break-duration"
+                        />
+                        <button
+                          type="button"
+                          onclick="addBreakTime(this, 'thu')"
+                        >
+                          추가
+                        </button>
+                      </div>
+                      <div class="break-time-list" id="thu-break-list"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 금요일 -->
+              <div class="day-time">
+                <h5>금요일</h5>
+                <div class="form-group">
+                  <label>영업여부</label>
+                  <select
+                    class="business-day-toggle"
+                    data-day="fri"
+                    onchange="toggleBusinessDay(this)"
+                  >
+                    <option value="open">영업</option>
+                    <option value="closed">휴무</option>
+                  </select>
+                </div>
+                <div class="business-hours" id="fri-hours">
+                  <div class="form-group">
+                    <label>오픈</label>
+                    <input
+                      type="text"
+                      name="businessTime.friopen"
+                      placeholder="1200"
+                      maxlength="4"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label>마감</label>
+                    <input
+                      type="text"
+                      name="businessTime.friclose"
+                      placeholder="2200"
+                      maxlength="4"
+                    />
+                  </div>
+                  <div class="form-group break-time">
+                    <label>브레이크타임</label>
+                    <div class="break-time-container">
+                      <div class="break-time-input">
+                        <input
+                          type="text"
+                          placeholder="시작시간"
+                          maxlength="4"
+                          class="break-start"
+                        />
+                        <input
+                          type="text"
+                          placeholder="지속시간(분)"
+                          maxlength="4"
+                          class="break-duration"
+                        />
+                        <button
+                          type="button"
+                          onclick="addBreakTime(this, 'fri')"
+                        >
+                          추가
+                        </button>
+                      </div>
+                      <div class="break-time-list" id="fri-break-list"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 토요일 -->
+              <div class="day-time">
+                <h5>토요일</h5>
+                <div class="form-group">
+                  <label>영업여부</label>
+                  <select
+                    class="business-day-toggle"
+                    data-day="sat"
+                    onchange="toggleBusinessDay(this)"
+                  >
+                    <option value="open">영업</option>
+                    <option value="closed">휴무</option>
+                  </select>
+                </div>
+                <div class="business-hours" id="sat-hours">
+                  <div class="form-group">
+                    <label>오픈</label>
+                    <input
+                      type="text"
+                      name="businessTime.satopen"
+                      placeholder="1200"
+                      maxlength="4"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label>마감</label>
+                    <input
+                      type="text"
+                      name="businessTime.satclose"
+                      placeholder="2200"
+                      maxlength="4"
+                    />
+                  </div>
+                  <div class="form-group break-time">
+                    <label>브레이크타임</label>
+                    <div class="break-time-container">
+                      <div class="break-time-input">
+                        <input
+                          type="text"
+                          placeholder="시작시간"
+                          maxlength="4"
+                          class="break-start"
+                        />
+                        <input
+                          type="text"
+                          placeholder="지속시간(분)"
+                          maxlength="4"
+                          class="break-duration"
+                        />
+                        <button
+                          type="button"
+                          onclick="addBreakTime(this, 'sat')"
+                        >
+                          추가
+                        </button>
+                      </div>
+                      <div class="break-time-list" id="sat-break-list"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 일요일 -->
+              <div class="day-time">
+                <h5>일요일</h5>
+                <div class="form-group">
+                  <label>영업여부</label>
+                  <select
+                    class="business-day-toggle"
+                    data-day="sun"
+                    onchange="toggleBusinessDay(this)"
+                  >
+                    <option value="open">영업</option>
+                    <option value="closed">휴무</option>
+                  </select>
+                </div>
+                <div class="business-hours" id="sun-hours">
+                  <div class="form-group">
+                    <label>오픈</label>
+                    <input
+                      type="text"
+                      name="businessTime.sunopen"
+                      placeholder="1200"
+                      maxlength="4"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label>마감</label>
+                    <input
+                      type="text"
+                      name="businessTime.sunclose"
+                      placeholder="2200"
+                      maxlength="4"
+                    />
+                  </div>
+                  <div class="form-group break-time">
+                    <label>브레이크타임</label>
+                    <div class="break-time-container">
+                      <div class="break-time-input">
+                        <input
+                          type="text"
+                          placeholder="시작시간"
+                          maxlength="4"
+                          class="break-start"
+                        />
+                        <input
+                          type="text"
+                          placeholder="지속시간(분)"
+                          maxlength="4"
+                          class="break-duration"
+                        />
+                        <button
+                          type="button"
+                          onclick="addBreakTime(this, 'sun')"
+                        >
+                          추가
+                        </button>
+                      </div>
+                      <div class="break-time-list" id="sun-break-list"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h4>기타 정보</h4>
+            <div class="form-group">
+              <label>최대 사용자 수 ( 0 이면 제한 없음 )</label>
+              <input type="number" name="allowMaxUserCount" value="0" />
+            </div>
+            <div class="form-group">
+              <label>영업 상태</label>
+              <select name="BusinessState">
+                <option value="true">영업중</option>
+                <option value="false">휴업중</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>대표자 연락처</label>
+              <input type="text" name="ownerCall" required />
+            </div>
+            <div class="form-group">
+              <label>매장 전화번호</label>
+              <input type="text" name="storeCall" required />
+            </div>
+            <div class="form-group">
+              <label>인스타그램</label>
+              <input type="text" name="insta" />
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h4>편의 정보</h4>
+            <div class="form-group">
+              <label>와이파이 ID</label>
+              <input type="text" name="wifiId" />
+            </div>
+            <div class="form-group">
+              <label>와이파이 비밀번호</label>
+              <input type="text" name="wifiPw" />
+            </div>
+            <div class="form-group">
+              <label>남자 화장실 위치</label>
+              <input type="text" name="toiletManLocation" />
+            </div>
+            <div class="form-group">
+              <label>남자 화장실 비밀번호</label>
+              <input type="text" name="toiletManPw" />
+            </div>
+            <div class="form-group">
+              <label>여자 화장실 위치</label>
+              <input type="text" name="toiletWomanLocation" />
+            </div>
+            <div class="form-group">
+              <label>여자 화장실 비밀번호</label>
+              <input type="text" name="toiletWomanPw" />
+            </div>
+          </div>
+
+          <button type="submit">스토어 추가</button>
+        </form>
+      </div>
+
+      <!-- 스토어 목록 -->
+      <div class="store-list">
+        <h3>스토어 목록</h3>
+        <div id="storeList"></div>
+      </div>
+    </div>
+    <script>
+      // 테스트 데이터
+      const testData = {
+        name: "호우수원",
+        storeOwnerName: "김정민",
+        accountHolder: "김정민",
+        settlementAccount: "1000-2608-4262",
+        unitPrice: 600,
+        location: "경기 수원시 팔달구 덕영대로895번길 20 1층 호우수원",
+        gps: {
+          Latitude: "37.2692324",
+          longitude: "127.0005632",
+        },
+        businessTime: {
+          monopen: "1200",
+          monclose: "2200",
+          monbreak: ["13001500", "18002000"],
+          tueopen: "1200",
+          tueclose: "2200",
+          tuebreak: ["13001500", "18002000"],
+          wedopen: null,
+          wedclose: null,
+          wedbreak: [],
+          thuopen: "1200",
+          thuclose: "2200",
+          thubreak: ["13001500", "18002000"],
+          friopen: "1200",
+          friclose: "2200",
+          fribreak: ["13001500", "18002000"],
+          satopen: "1200",
+          satclose: "2200",
+          satbreak: ["13001500", "18002000"],
+          sunopen: "1200",
+          sunclose: "2200",
+          sunbreak: ["13001500", "18002000"],
+        },
+        allowMaxUserCount: 0,
+        BusinessState: true,
+        ownerCall: "010-2171-4251",
+        storeCall: "0507-1471-2079",
+        insta: "@hou_suwon",
+        wifiId: "HOU_5G",
+        wifiPw: "HOU1234567",
+        toiletManLocation: "출입문 오른쪽 건물",
+        toiletManPw: "비밀번호 없음",
+        toiletWomanLocation: "출입문 오른쪽 건물",
+        toiletWomanPw: "비밀번호 없음",
+      };
+
+      // 테스트 데이터 입력 함수
+      function fillTestData() {
+        // 기본 정보 입력
+        document.querySelector('input[name="name"]').value = testData.name;
+        document.querySelector('input[name="storeOwnerName"]').value =
+          testData.storeOwnerName;
+        document.querySelector('input[name="accountHolder"]').value =
+          testData.accountHolder;
+        document.querySelector('input[name="settlementAccount"]').value =
+          testData.settlementAccount;
+        document.querySelector('input[name="unitPrice"]').value =
+          testData.unitPrice;
+        document.querySelector('input[name="location"]').value =
+          testData.location;
+
+        // GPS 정보
+        document.querySelector('input[name="gps.Latitude"]').value =
+          testData.gps.Latitude;
+        document.querySelector('input[name="gps.longitude"]').value =
+          testData.gps.longitude;
+
+        // 영업 시간 정보
+        const days = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
+        days.forEach((day) => {
+          const openInput = document.querySelector(
+            `input[name="businessTime.${day}open"]`
+          );
+          const closeInput = document.querySelector(
+            `input[name="businessTime.${day}close"]`
+          );
+          if (openInput && closeInput) {
+            openInput.value = testData.businessTime[`${day}open`] || "";
+            closeInput.value = testData.businessTime[`${day}close`] || "";
+          }
+
+          // 휴무일 처리
+          if (testData.businessTime[`${day}open`] === null) {
+            const select = document.querySelector(`select[data-day="${day}"]`);
+            if (select) select.value = "closed";
+            const hoursDiv = document.getElementById(`${day}-hours`);
+            if (hoursDiv) hoursDiv.style.display = "none";
+          }
+        });
+
+        // 기타 정보
+        document.querySelector('input[name="allowMaxUserCount"]').value =
+          testData.allowMaxUserCount;
+        document.querySelector('select[name="BusinessState"]').value =
+          testData.BusinessState.toString();
+        document.querySelector('input[name="ownerCall"]').value =
+          testData.ownerCall;
+        document.querySelector('input[name="storeCall"]').value =
+          testData.storeCall;
+        document.querySelector('input[name="insta"]').value = testData.insta;
+
+        // 편의 정보
+        document.querySelector('input[name="wifiId"]').value = testData.wifiId;
+        document.querySelector('input[name="wifiPw"]').value = testData.wifiPw;
+        document.querySelector('input[name="toiletManLocation"]').value =
+          testData.toiletManLocation;
+        document.querySelector('input[name="toiletManPw"]').value =
+          testData.toiletManPw;
+        document.querySelector('input[name="toiletWomanLocation"]').value =
+          testData.toiletWomanLocation;
+        document.querySelector('input[name="toiletWomanPw"]').value =
+          testData.toiletWomanPw;
+
+        // 지하철 정보 추가
+        document.getElementById("subwayLine").value = 1;
+        document.getElementById("subwayStation").value = "수원";
+        document.getElementById("exitNumber").value = 3;
+        document.getElementById("walkTime").value = 1;
+        // addSubwayInfo();
+
+        // 브레이크타임 추가
+        days.forEach((day) => {
+          if (testData.businessTime[`${day}break`]) {
+            testData.businessTime[`${day}break`].forEach((breakTime) => {
+              const startTime = breakTime.slice(0, 4);
+              const endTime = breakTime.slice(4);
+              const duration = calculateDuration(startTime, endTime);
+
+              const container = document.querySelector(
+                `#${day}-hours .break-time-container`
+              );
+              const startInput = container.querySelector(".break-start");
+              const durationInput = container.querySelector(".break-duration");
+
+              startInput.value = startTime;
+              durationInput.value = duration;
+              addBreakTime(container.querySelector("button"), day);
+            });
+          }
+        });
+      }
+
+      // 시작시간과 종료시간으로 지속시간(분) 계산
+      function calculateDuration(start, end) {
+        const startHour = parseInt(start.slice(0, 2));
+        const startMin = parseInt(start.slice(2));
+        const endHour = parseInt(end.slice(0, 2));
+        const endMin = parseInt(end.slice(2));
+
+        return (endHour - startHour) * 60 + (endMin - startMin);
+      }
+    </script>
+    <script src="admin_store_register.js"></script>
+  </body>
+</html>

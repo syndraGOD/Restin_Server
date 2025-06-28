@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>포인트 충전 요청 관리</title>
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .back-btn {
+            padding: 8px 16px;
+            background-color: #2196f3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .request-item {
+            background-color: #fff;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .request-info {
+            margin-bottom: 15px;
+        }
+        .request-info p {
+            margin: 5px 0;
+            color: #666;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+        .approve-btn {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .reject-btn {
+            padding: 8px 16px;
+            background-color: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .reject-form {
+            display: none;
+            margin-top: 10px;
+        }
+        .reject-form.active {
+            display: block;
+        }
+        .reject-form textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        .status-pending {
+            color: #f39c12;
+        }
+        .status-approved {
+            color: #27ae60;
+        }
+        .status-rejected {
+            color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>포인트 충전 요청 관리</h2>
+            <a href="/api/admin" class="back-btn">대시보드로 돌아가기</a>
+        </div>
+        <div id="requestList"></div>
+    </div>
+
+    <script>
+        async function loadRequests() {
+            try {
+                const response = await fetch("/api/admin/point-requests", {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include'
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    displayRequests(data.requests);
+                } else {
+                    console.error("요청 데이터 로드 실패:", data.message);
+                }
+            } catch (error) {
+                console.error("요청 로드 실패:", error);
+            }
+        }
+
+        function displayRequests(requests) {
+            const requestList = document.getElementById("requestList");
+            if (!requests || requests.length === 0) {
+                requestList.innerHTML = "<p>처리할 충전 요청이 없습니다.</p>";
+                return;
+            }
+
+            requestList.innerHTML = requests.map(request => `
+                <div class="request-item" id="request-${request.info.pointRequestTicketId}">
+                    <div class="request-info">
+                        <h4>충전 요청 #${request.info.pointRequestTicketId}</h4>
+                        <p class="status-${request.info.status}">
+                            상태: ${getStatusText(request.info.status)}
+                        </p>
+                        <p>요청 금액: ${request.charge.chargeAmount.toLocaleString()}원</p>
+                        <p>보너스 비율: ${request.charge.bonusRate * 100}%</p>
+                        <p>사용자 ID: ${request.info.userId}</p>
+                        <p>요청일: ${new Date(request.info.requestDate.seconds * 1000).toLocaleString()}</p>
+                    </div>
+                    ${request.info.status === 'pending' ? `
+                        <div class="button-group">
+                            <button class="approve-btn" onclick="approveRequest('${request.info.pointRequestTicketId}')">
+                                승인
+                            </button>
+                            <button class="reject-btn" onclick="showRejectForm('${request.info.pointRequestTicketId}')">
+                                거부
+                            </button>
+                        </div>
+                        <div class="reject-form" id="reject-form-${request.info.pointRequestTicketId}">
+                            <textarea placeholder="거부 사유를 입력하세요" id="reject-reason-${request.info.pointRequestTicketId}"></textarea>
+                            <button class="reject-btn" onclick="rejectRequest('${request.info.pointRequestTicketId}')">
+                                거부 확인
+                            </button>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function getStatusText(status) {
+            switch(status) {
+                case 'pending': return '대기중';
+                case 'approved': return '승인됨';
+                case 'rejected': return '거부됨';
+                default: return status;
+            }
+        }
+
+        function showRejectForm(requestId) {
+            const form = document.getElementById(`reject-form-${requestId}`);
+            form.classList.add('active');
+        }
+
+        async function approveRequest(requestId) {
+            if (!confirm('이 충전 요청을 승인하시겠습니까?')) return;
+
+            try {
+                const response = await fetch(`/api/admin/point-requests/${requestId}/approve`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    alert('충전 요청이 승인되었습니다.');
+                    loadRequests();
+                } else {
+                    alert(data.message || '승인 처리 실패');
+                }
+            } catch (error) {
+                console.error('승인 처리 실패:', error);
+                alert('승인 처리 중 오류가 발생했습니다.');
+            }
+        }
+
+        async function rejectRequest(requestId) {
+            const reason = document.getElementById(`reject-reason-${requestId}`).value;
+            if (!reason) {
+                alert('거부 사유를 입력해주세요.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/admin/point-requests/${requestId}/reject`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ reason })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    alert('충전 요청이 거부되었습니다.');
+                    loadRequests();
+                } else {
+                    alert(data.message || '거부 처리 실패');
+                }
+            } catch (error) {
+                console.error('거부 처리 실패:', error);
+                alert('거부 처리 중 오류가 발생했습니다.');
+            }
+        }
+
+        // 초기 로드
+        loadRequests();
+    </script>
+</body>
+</html>
