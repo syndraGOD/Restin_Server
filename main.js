@@ -50,6 +50,6 @@ app.get((req, res) => {
 });
 
 app.listen(process.env.SERVER_PORT, () => {
-  console.log(`Server running on 8080`);
+  console.log(`Server running on ${process.env.SERVER_PORT}`);
 });
 //test
