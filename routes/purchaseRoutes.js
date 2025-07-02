@@ -122,12 +122,12 @@ router.post("/usage/portone", verifyTokenMiddleware, async (req, res) => {
 
           // USAGE_WAIT_PURCHASE_TICKET에서 데이터 가져오기
           const usageIngRef = doc(
-            db,
+            global.firebaseDB,
             "USAGE_WAIT_PURCHASE_TICKET",
             userRes.data.usage.usageLogId
           );
           const usageEndRef = doc(
-            db,
+            global.firebaseDB,
             "USAGE_END_TICKET",
             userRes.data.usage.usageLogId
           );
@@ -268,12 +268,12 @@ router.post("/usage/point", verifyTokenMiddleware, async (req, res) => {
 
     // USAGE_ING_TICKET에서 데이터 가져오기
     const usageIngRef = doc(
-      db,
+      global.firebaseDB,
       "USAGE_WAIT_PURCHASE_TICKET",
       userRes.data.usage.usageLogId
     );
     const usageEndRef = doc(
-      db,
+      global.firebaseDB,
       "USAGE_END_TICKET",
       userRes.data.usage.usageLogId
     );
