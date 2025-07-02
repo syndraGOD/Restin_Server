@@ -14,7 +14,7 @@ global.firebaseConfig = {
 const admin = require("firebase-admin");
 admin.initializeApp(global.firebaseConfig);
 
-//무지했던 과거에 김한울아... 왜 유저 객체로 쿼리를짜니..
+//무지했던 과거에 김한울아... 왜 유저 객체로 쿼리를짜니.. 
 const app = initializeApp(global.firebaseConfig);
 global.firebaseDB = getFirestore(app);
 global.firebaseStorage = getStorage(app);
