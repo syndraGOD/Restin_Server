@@ -25,6 +25,7 @@ const purchase = require("./routes/purchaseRoutes.js"); //purchase 관련 라우
 const imgs = require("./routes/imgRoutes.js");
 const survey = require("./routes/surveyRoutes.js");
 const app = express();
+const { fetchStoreDataWithImages } = require("./utils/CRUD_storeData.js");
 
 
 // 라우터 설정
@@ -49,7 +50,12 @@ app.get((req, res) => {
   res.status(404).send("not founds");
 });
 
+
+// 서버 시작 시 초기 데이터 로드
+ fetchStoreDataWithImages();
+
 app.listen(process.env.SERVER_PORT, () => {
+  console.log('NODE_ENV : ', process.env.NODE_ENV);
   console.log(`Server running on ${process.env.SERVER_PORT}`);
 });
 //test

@@ -114,15 +114,17 @@ router.post(
 
       // Firebase에 저장
       const ticketRef = doc(
-        db,
+        global.firebaseDB,
         colNameRequest,
         pointRequestTicket.info.pointRequestTicketId
       );
       await setDoc(ticketRef, { ...pointRequestTicket });
 
+      global.sendDiscordWebhook(process.env.DISCORD_POINT, "포인트", "포인트 충전 요청", `닉네임 : ${userRes.data.profile.nick}\n현재 포인트 : ${userRes.data.point.amount}원\n충전금액 : ${chargeAmount}원\n보너스율 : ${bonusRate}`);
       res.status(200).json({
         success: true,
       });
+
     } catch (error) {
       console.log(error);
       res.status(400).json({ success: false, error: error.message });
@@ -142,11 +144,13 @@ router.delete(
       const requestColRef = collection(global.firebaseDB, colNameRequest);
       //firebase에서 삭제
       const ticketRef = doc(
-        db,
+        global.firebaseDB,
         colNameRequest,
         existingRequest.info.pointRequestTicketId
       );
       await deleteDoc(ticketRef);
+      const userRes = await db_user_read(userId);
+      global.sendDiscordWebhook(process.env.DISCORD_POINT, "포인트", "포인트 충전 취소", `닉네임 : ${userRes.data.profile.nick}\n현재 포인트 : ${userRes.data.point.amount}원\n충전금액 : ${req.body.existingRequest.charge.chargeAmount}원\n보너스율 : ${req.body.existingRequest.charge.bonusRate}`);
       res.status(200).json({ success: true });
     } catch (error) {
       res.status(400).json({ success: false, error: error.message });
@@ -179,7 +183,7 @@ router.post("/request/refund", verifyTokenMiddleware, async (req, res) => {
 
     // Firebase에 저장
     const ticketRef = doc(
-      db,
+      global.firebaseDB,
       colNameRequest,
       pointRequestTicket.pointRequestTicketId
     );

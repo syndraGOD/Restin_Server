@@ -40,9 +40,12 @@ const createSurveyMiddleware = async (req, res, next) => {
     };
     const docName = `survey_result_${userId}`;
     const surveyDoc = await queryWrite("SURVEY", docName, newSurveyDoc);
+
     if (surveyDoc.success) {
       next();
-    } else {
+      global.sendDiscordWebhook(process.env.DISCORD_SURVEY, "설문 제출", "사용지역 조사 설문", "닉네임 : " + userDoc.profile.nick + "\n" + "설문 내용 : " + contents);
+    } 
+    else {
       res.status(400).json({ message: `error: ${surveyDoc?.error}` });
     }
   } else {

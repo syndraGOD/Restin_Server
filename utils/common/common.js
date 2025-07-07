@@ -1,6 +1,7 @@
 const { initializeApp } = require("firebase/app");
 const { getFirestore } = require("firebase/firestore");
 const { getStorage } = require("firebase/storage");
+const sendDiscordWebhook = require("./discord");
 global.firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
   authDomain: process.env.FIREBASE_AUTH_DOMAIN,
@@ -18,3 +19,7 @@ admin.initializeApp(global.firebaseConfig);
 const app = initializeApp(global.firebaseConfig);
 global.firebaseDB = getFirestore(app);
 global.firebaseStorage = getStorage(app);
+global.sendDiscordWebhook = sendDiscordWebhook;
+global.timeStamp = () => {
+  return new Date(new Date().getTime() + 9 * 60 * 60 * 1000).toISOString().split(".")[0];
+}

@@ -76,6 +76,7 @@ const usage_start = async (req, res, next) => {
 
     if (!storeDocSnap.exists()) return;
     let snapData = storeDocSnap.data();
+    const storeData = snapData;
     const storeAllowMaxCount = Number(snapData.allowMaxUserCount);
     const storeOwnerCall = snapData.ownerCall;
     q = query(
@@ -126,6 +127,8 @@ const usage_start = async (req, res, next) => {
             newStoreOwnerCall,
             `[레스틴] ${userNick} 님이 서비스를 시작하였습니다.`
           );
+
+          global.sendDiscordWebhook(process.env.DISCORD_USAGE, "서비스 이용", "사용을 시작하였습니다", "닉네임 : " + userNick + "\n" + "스토어 : " + storeData.name);
         }
       } else {
         res.status(userRes.resultCode).json({ message: userRes.text });
@@ -169,14 +172,14 @@ const usage_stop = async (req, res, next) => {
       totalUsageDurationSeconds,
       totalUsagePrice: TotalPriceMath(
         storeData.unitPrice,
-        totalUsageDurationMinutes
+        totalUsageDurationMinutes 
       ),
     };
 
     // const newUsage = new UsageTicketForm({ userId });
     // userData.usage = newUsage;
     userData.usage = usage;
-    req.userData = userData;
+    req.userData = userData; 
 
     const storeOwnerCall = storeData.ownerCall;
     // let dbRes = await db_user_update(userId, { usage: newUsage.usage });
@@ -197,6 +200,8 @@ const usage_stop = async (req, res, next) => {
             newStoreOwnerCall,
             `[레스틴] ${userNick} 님이 서비스 사용을 종료하였습니다.`
           );
+
+          global.sendDiscordWebhook(process.env.DISCORD_USAGE, "서비스 이용", "사용을 종료하였습니다", `닉네임 : ${userNick}\n스토어 : ${storeData.name}\n이용시간 : ${totalUsageDurationMinutes}분 ${totalUsageDurationSeconds}초\n이용료 : ${usage.totalUsagePrice}원`);
         }
       } else {
         res.status(userRes.resultCode).json({ message: userRes.text });

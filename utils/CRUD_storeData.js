@@ -58,7 +58,7 @@ const fetchStoreDataWithImages = async () => {
 };
 
 // 서버 시작 시 초기 데이터 로드
-fetchStoreDataWithImages();
+// fetchStoreDataWithImages();
 
 // 1분마다 데이터 새로고침
 setInterval(fetchStoreDataWithImages, 30 * 60 * 1000);
@@ -225,6 +225,7 @@ const db_store_delete = async (UUID) => {
 };
 
 module.exports = {
+  fetchStoreDataWithImages,
   db_store_create,
   db_store_read,
   db_store_read_query,
