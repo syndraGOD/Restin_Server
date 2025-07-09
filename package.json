@@ -21,6 +21,7 @@
     "firebase-admin": "^12.7.0",
     "http": "^0.0.1-security",
     "jsonwebtoken": "^9.0.2",
+    "mixpanel": "^0.18.1",
     "node-fetch": "2.0.0",
     "nodemon": "^3.1.7",
     "notion-client": "^6.16.0",

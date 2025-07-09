@@ -2,6 +2,7 @@ const { initializeApp } = require("firebase/app");
 const { getFirestore } = require("firebase/firestore");
 const { getStorage } = require("firebase/storage");
 const sendDiscordWebhook = require("./discord");
+const mixpanel = require("./mixpanel");
 global.firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
   authDomain: process.env.FIREBASE_AUTH_DOMAIN,
@@ -20,6 +21,7 @@ const app = initializeApp(global.firebaseConfig);
 global.firebaseDB = getFirestore(app);
 global.firebaseStorage = getStorage(app);
 global.sendDiscordWebhook = sendDiscordWebhook;
+global.mixpanel = mixpanel();
 global.timeStamp = () => {
   return new Date(new Date().getTime() + 9 * 60 * 60 * 1000).toISOString().split(".")[0];
 }
