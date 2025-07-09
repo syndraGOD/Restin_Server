@@ -22,7 +22,8 @@ jobs:
             cd Restin_Server
             pm2 kill
             git stash save 'temporary stash'
-            git pull --force origin dev
+            git fetch origin dev
+            git reset --hard origin/dev
             git stash pop
             npm i --force
             npm run start:dev
