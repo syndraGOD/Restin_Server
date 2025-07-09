@@ -184,6 +184,9 @@ const user_loginMiddleware = async (req, res, next) => {
     // '서비스 이용 총 비용'
     // ''
   });
+  mixpanel.track("sign_in_complete", {
+    distinct_id: userId
+  });
   // sessionStorage.setItem('mp_distinct_id', userId);
 
   res
