@@ -24,6 +24,5 @@ jobs:
             git stash save 'temporary stash'
             git fetch origin dev
             git reset --hard origin/dev
-            git stash pop
             npm i --force
             npm run start:dev

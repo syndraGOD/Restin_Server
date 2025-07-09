@@ -24,6 +24,5 @@ jobs:
             git stash save 'temporary stash'
             git fetch origin production
             git reset --hard origin/production
-            git stash pop
             npm i --force
             npm run start:prod
