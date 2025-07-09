@@ -1,8 +1,8 @@
 const RESForm = require("../models/inPacketForm");
 const msgModule = require("coolsms-node-sdk").default;
-const apiKey = "NCSS7ZTFPWCTQJCC";
-const apiSecret = "G7TBDKLPBPXDTBJ3XMJFI1OUTPY2SDQB";
-const fromNumber = "07080959289";
+const apiKey = process.env.COOLSMS_API_KEY;
+const apiSecret = process.env.COOLSMS_API_SECRET;
+const fromNumber = process.env.COOLSMS_FROM_NUMBER;
 const messageService = new msgModule(apiKey, apiSecret);
 
 
