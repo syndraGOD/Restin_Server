@@ -21,6 +21,8 @@ jobs:
           script: | # 실행할 스크립트
             cd Restin_Server
             pm2 kill
+            git stash save 'temporary stash'
             git pull --force origin production
+            git stash pop
             npm i --force
             npm run start:prod
