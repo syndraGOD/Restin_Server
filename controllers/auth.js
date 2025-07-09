@@ -7,11 +7,12 @@ const {
 } = require("../utils/CRUD_userData.js");
 
 const UserForm = require("../models/userDataForm.js");
-const { jsDateToFirebaseDate } = require("../utils/firebaseDateConverter.js");
+const { jsDateToFirebaseDate, firebaseDateToJSDate } = require("../utils/firebaseDateConverter.js");
 const sendMsg = require("../utils/SMS_message.js");
 const { v4: uuidv4 } = require("uuid");
 const jwt = require("jsonwebtoken");
 const { generateToken, utcFromTimestamp } = require("../utils/TokenAPI.js");
+const mixpanel = require("mixpanel");
 
 const smsVerify = {
   //솔직히 이딴 방법 쓰면 안되는데, /login에서 유저정보 검증은 해야되겠고
@@ -166,10 +167,29 @@ const user_loginMiddleware = async (req, res, next) => {
     auth_token: newToken,
   };
   console.log("Token Refresh : ", user.data.profile.phoneNumber);
+  await db_user_update(userId, user.data);
+  // mixpanel.identify(userId)
+  mixpanel.people.set(userId, { 
+    '$name': user.data.profile.nick,
+    // '$email': user.data.profile.email, //없음
+    $phone: user.data.profile.phoneNumber.replace('0', '+82'),
+    $created: firebaseDateToJSDate(user.data.profile.joinDate),
+    'ID': userId,
+    '생년월일': user.data.profile.birth,
+    '마지막 로그인': firebaseDateToJSDate(user.data.security.lastLogin),
+    '유저 타입': user.data.ADMIN_FG === 'Y' ? '관리자' : '일반 유저',
+    '포인트': user.data.point.amount,
+    // '서비스 이용 총 횟수'
+    // '서비스 이용 총 시간'
+    // '서비스 이용 총 비용'
+    // ''
+  });
+  // sessionStorage.setItem('mp_distinct_id', userId);
+
   res
     .status(200)
     .json({ message: "user login access", user, newToken, exist: true });
-  await db_user_update(userId, user.data);
+
 };
 const user_registerMiddleware = async (req, res, next) => {
   const { nick, birth, phoneNumber } = req.body;

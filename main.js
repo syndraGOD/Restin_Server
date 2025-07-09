@@ -49,7 +49,19 @@ app.use("/survey", survey); // 설문 관련 라우터
 app.get((req, res) => {
   res.status(404).send("not founds");
 });
+app.use((err, req, res, next) => {
+  console.error('알 수 없는 에러 :', err.stack);
 
+  const statusCode = err.status || 500;
+  const message = err.message || 'Internal Server Error';
+
+  res.status(statusCode).json({
+    status: 'error',
+    statusCode: statusCode,
+    message: message,
+    stack: process.env.NODE_ENV !== 'production' ? err.stack : undefined
+  });
+});
 
 // 서버 시작 시 초기 데이터 로드
  fetchStoreDataWithImages();
