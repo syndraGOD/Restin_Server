@@ -169,7 +169,8 @@ const user_loginMiddleware = async (req, res, next) => {
   console.log("Token Refresh : ", user.data.profile.phoneNumber);
   await db_user_update(userId, user.data);
   // mixpanel.identify(userId)
-  mixpanel.people.set(userId, { 
+  try{
+  global.mixpanel.people.set(userId, { 
     '$name': user.data.profile.nick,
     // '$email': user.data.profile.email, //없음
     $phone: user.data.profile.phoneNumber.replace('0', '+82'),
@@ -184,9 +185,12 @@ const user_loginMiddleware = async (req, res, next) => {
     // '서비스 이용 총 비용'
     // ''
   });
-  mixpanel.track("sign_in_complete", {
-    distinct_id: userId
-  });
+    global.mixpanel.track("sign_in_complete", {
+      distinct_id: userId
+    });
+  }catch(error){
+    console.error('Mixpanel 오류: ', error);
+  }
   // sessionStorage.setItem('mp_distinct_id', userId);
 
   res
