@@ -194,7 +194,7 @@ const usage_stop = async (req, res, next) => {
           storeOwnerCall === "-" ||
           storeOwnerCall === undefined
         ) {
-          //no sms
+          //no sms 
         } else {
           const newStoreOwnerCall = storeOwnerCall.replaceAll("-", "");
           sendMsg(
