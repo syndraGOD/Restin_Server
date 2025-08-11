@@ -31,8 +31,9 @@ const sendMsg = require("../utils/SMS_message.js");
 const TotalPriceMath = (b, c) => {
   b = parseInt(b);
   c = parseInt(c);
+  const sales = c >= 60 ? 0.75 : c >= 30 ? 0.9 : 1 
   const result = b + b * 0.5 * Math.max(0, Math.ceil((c - 10) / 5));
-  return result;
+  return Math.round(result * sales / 10) * 10;
 };
 
 // console.log(typeof b, typeof c);
